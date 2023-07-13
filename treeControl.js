@@ -20,109 +20,88 @@ const sortedData = data.sort(compareByParentID);
 
 console.log(data);
 
-function createRoot(obj) {
+function createNode(obj, isRoot) {
+  // Create the container for the folder controls and the content
   const newContainer = document.createElement("div");
   newContainer.id = `${obj.CODEID}-container`;
   newContainer.style.display = "flex";
-  newContainer.style.display = "flex";
-  newContainer.style.justifyContent = "flex-start";
-  newContainer.style.alignItems = "center";
+  newContainer.style.flexDirection = "column";
+  newContainer.style.width = "max-content";
 
-  const rootNode = document.createElement("div");
-
-  rootNode.setAttribute("id", `${obj.CODEID}`);
-  rootNode.setAttribute(
-    "style",
-    "padding: 5%; background-color: #D3D3D3; border-style: solid; display: flex; flex-direction: column;"
-  );
+  // Create the folder controls container and add the folder icon and folder name
+  const folderControlsContainer = document.createElement("div");
+  folderControlsContainer.style.display = "flex";
+  folderControlsContainer.style.alignItems = "center";
 
   const folderIcon = document.createElement("img");
-  folderIcon.src = "/icon_folder.png";
-  folderIcon.style.width = "10px";
-  folderIcon.style.height = "10px";
+  folderIcon.src = `icon_${obj.CODEIcon}.png`;
+  folderIcon.style.width = "16px";
+  folderIcon.style.height = "16px";
 
-  const showButton = document.createElement("button");
-  showButton.textContent = "-";
-  showButton.addEventListener("click", () => {
-    const children = Array.from(rootNode.children);
-    children.forEach((child) => {
-      child.style.display = child.style.display === "none" ? "flex" : "none";
-    });
-    showButton.innerHTML = showButton.innerHTML === "+" ? "-" : "+";
+  const folderName = document.createElement("h4");
+  folderName.textContent = obj.CODETxt;
+  folderName.style.padding = "0 0 4px 5px";
+
+  folderName.addEventListener("click", () => {
+    folderName.textContent =
+      folderName.textContent === obj.CODETxt ? obj.CODEVal : obj.CODETxt;
   });
 
-  rootNode.innerHTML = "root";
+  const node = document.createElement("div");
+  node.id = obj.CODEID;
+  node.style.marginLeft = "20px";
+  node.style.display = "none";
+  node.style.flexDirection = "column";
+  node.style.width = "max-content";
 
-  newContainer.appendChild(folderIcon);
-  newContainer.appendChild(rootNode);
-  newContainer.appendChild(showButton);
+  const showButton = document.createElement("img");
+  showButton.style.width = "25px";
+  showButton.style.height = "25px";
 
-  treeWrapper.appendChild(newContainer);
+  // Check if the node has children and add toggle functionality if so.
+  const hasChildren = data.some((item) => item.CODEParentID === obj.CODEID);
 
-  return rootNode;
-}
-
-function createNode(obj) {
-  const newContainer = document.createElement("div");
-  newContainer.id = `${obj.CODEID}-container`;
-  newContainer.style.display = "flex";
-  newContainer.style.justifyContent = "flex-start";
-  newContainer.style.alignItems = "center";
-
-  const newNode = document.createElement("div");
-
-  newNode.setAttribute("id", obj.CODEID);
-  newNode.setAttribute(
-    "style",
-    "padding: 5%; background-color: #D3D3D3; border-style: solid; display: flex; flex-direction: column;"
-  );
-
-  newNode.innerHTML = obj.CODETxt;
-
-  const folderIcon = document.createElement("img");
-  folderIcon.src = "/icon_folder.png";
-  folderIcon.style.width = "10px";
-  folderIcon.style.height = "10px";
-
-  // const moreIcon = document.createElement('img')
-  // moreIcon.src = "/icon_plus.png"
-  // moreIcon.style.width = '20px'
-  // moreIcon.style.height = '20px';
-
-  // const lessIcon = document.createElement('img')
-  // lessIcon.src = "/icon_minus.png"
-  // lessIcon.style.width = '20px'
-  // lessIcon.style.height = '20px';
-
-  const showButton = document.createElement("button");
-  showButton.innerHTML = "-";
-  showButton.addEventListener("click", () => {
-    const children = Array.from(newNode.children);
-    children.forEach((child) => {
-      child.style.display = child.style.display === "none" ? "flex" : "none";
+  if (hasChildren) {
+    showButton.src = "icon_plus.png";
+    showButton.addEventListener("click", () => {
+      if (node.style.display === "none") {
+        node.style.display = "flex";
+        showButton.src = "icon_minus.png";
+      } else {
+        node.style.display = "none";
+        showButton.src = "icon_plus.png";
+      }
     });
-    showButton.innerHTML = showButton.innerHTML === "+" ? "-" : "+";
-  });
+    // Add the showButton to the folder controls container
+    folderControlsContainer.appendChild(showButton);
+  } else {
+    newContainer.style.marginLeft = "22px";
+  }
 
-  // newNode.addEventListener('click', () => {
-  //     newNode.innerHTML = newNode.innerHTML === obj.CODETxt ? obj.CODEVal : obj.CODETxt
-  // })
+  // Add the folder icon, folder name, and folder controls container to the newContainer
+  folderControlsContainer.appendChild(folderIcon);
+  folderControlsContainer.appendChild(folderName);
+  newContainer.appendChild(folderControlsContainer);
+  newContainer.appendChild(node);
 
-  newContainer.appendChild(folderIcon);
-  newContainer.appendChild(newNode);
-  newContainer.appendChild(showButton);
-
-  return newContainer;
+  if (isRoot) {
+    treeWrapper.appendChild(newContainer);
+    return node;
+  } else {
+    return newContainer;
+  }
 }
 
 //Create Nodes
 const nodeList = [];
 
-for (let i = 0; i < data.length; i += 1) {
-  let newNode = null;
-  if (i === 0) {
-    newNode = createRoot(data[i]);
-  } else newNode = createNode(data[i]);
+//Create root node and add to list
+newNode = createNode(data[0], true);
+nodeList.push(newNode);
+
+//Add the rest of the nodes
+for (let i = 1; i < data.length; i += 1) {
+  let newNode = createNode(data[i], false);
   nodeList.push(newNode);
 }
 
