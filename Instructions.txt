@@ -1,0 +1,20 @@
+===========================
+JavaScript Tree Coding Test
+===========================
+
+Please create a tree control using either vanilla JavaScript or the jQuery core library (for shorter syntax).  No external plugins or other code should be used.
+
+The tree control will be reviewed based on:
+1. Completeness / Code Quality
+2. Arch Design & Reusability
+
+Notes:
+1. The attached "js_tree.txt" file contains the source data as an arrow of rows that would be sent by the database / API.
+2. If CODEParentID is null, that means it is a root node.  Otherwise, CODEParentID has the CODEID of the parent element in the tree
+3. CODEIcon is the suffix of the icon used to render that node - "icon_xxxxx.png"
+4. CODETxt is the Display Text
+5. Clicking on a node should call a hook that will display the "CODEVal" of that node.  This should not fire when expanding / collapsing the tree.
+6. It would be great if you could make the Tree Control compatible with IE 11+
+
+If you have any questions or need further clarifications about requirements - please feel free to ask any time.
+
