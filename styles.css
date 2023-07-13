@@ -12,6 +12,11 @@ body {
   padding: 15px 30px;
 }
 
+#title,
+#description {
+  margin-bottom: 3%;
+}
+
 * {
   margin: 0;
   padding: 0;

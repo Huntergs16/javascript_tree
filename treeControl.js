@@ -1,3 +1,17 @@
+/*
+  Description:
+  - This code generates a tree structure based on the provided data.
+  - The data represents a hierarchy of nodes, where each node has an ID, a parent ID, a value, a text, and an icon.
+  - The tree is rendered dynamically using JavaScript and HTML elements.
+  - Nodes can be expanded or collapsed by clicking on the corresponding toggle button.
+  - Clicking on a node displays its value.
+
+  Steps:
+  1) Order data by parentID so that we only check subsequent nodes for children when looping.
+  2) Create each node individually, the root is created and appended to treeWrapper element.
+  3) Loop through sortedData and append children nodes to parent nodes
+*/
+
 var treeWrapper = document.querySelector("#tree-wrapper");
 
 var data = JSON.parse(`[
@@ -18,7 +32,18 @@ function compareByParentID(a, b) {
 // Sort by parentID
 const sortedData = data.sort(compareByParentID);
 
-console.log(data);
+/**
+ * Create a tree node element.
+ *
+ * @param {Object} obj - The object containing the node data.
+ * @param {boolean} isRoot - Indicates whether the node is a root node.
+ * @returns {HTMLElement} - The created node element.
+ *
+ * Organization:
+ *  - Create a container div that consists of 1) folderControlsContainer and 2) container for children nodes
+ *  - folderControlsContainer consists of 1) folderIcon, 2) folderName, 3) toggleButton
+ *  - 'click' listeners exist for folder toggle button and folderName
+ */
 
 function createNode(obj, isRoot) {
   // Create the container for the folder controls and the content
@@ -105,14 +130,22 @@ for (let i = 1; i < data.length; i += 1) {
   nodeList.push(newNode);
 }
 
-// Append child nodes
-for (let i = 0; i < nodeList.length; i += 1) {
-  for (let j = 1; j < nodeList.length; j += 1) {
-    const parentNode = data[i];
-    const childNode = nodeList[j];
-    if (data[j].CODEParentID === data[i].CODEID) {
-      let listNode = document.getElementById(`${parentNode.CODEID}`);
-      listNode.appendChild(childNode);
+/*
+  Append child nodes
+    1) Loop through ordered nodes
+    2) For each node, check the subsequent nodes for children
+    3) For each subsequent node, if it is a child, append it to the parentNode.
+*/
+for (let i = 0; i < sortedData.length; i++) {
+  const parentData = sortedData[i];
+  const parentNode = document.getElementById(`${parentData.CODEID}`);
+
+  for (let j = i + 1; j < sortedData.length; j++) {
+    const childData = sortedData[j];
+
+    if (childData.CODEParentID === parentData.CODEID) {
+      const childNode = nodeList[j];
+      parentNode.appendChild(childNode);
     }
   }
 }
