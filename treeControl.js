@@ -43,6 +43,7 @@ const sortedData = data.sort(compareByParentID);
  *  - Create a container div that consists of 1) folderControlsContainer and 2) container for children nodes
  *  - folderControlsContainer consists of 1) folderIcon, 2) folderName, 3) toggleButton
  *  - 'click' listeners exist for folder toggle button and folderName
+ *  - if node has children, add folder toggle button
  */
 
 function createNode(obj, isRoot) {
